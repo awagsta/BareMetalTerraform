@@ -50,7 +50,6 @@ resource "oci_core_instance" "bm_instance" {
   availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.AD - 1],"name")}"
   compartment_id      = "${var.compartment_ocid}"
   display_name        = "BM Instance"
-  image               = "${var.instance_image_ocid[var.region]}"
   shape               = "${var.instance_shape}"
   subnet_id           = "${oci_core_subnet.bare_metal_subnet.id}"
 
@@ -59,6 +58,11 @@ resource "oci_core_instance" "bm_instance" {
     hostname_label   = "bminstancevnic"
     display_name     = "BM Instance VNIC"
     assign_public_ip = true
+  }
+
+  source_details {
+    source_type = "image"
+    source_id   = "${var.instance_image_ocid[var.region]}"
   }
 
   timeouts {
@@ -107,7 +111,7 @@ resource "oci_core_security_list" "bare_metal_security_list" {
   display_name   = "Bare Metal Security List"
 
   ingress_security_rules {
-    destination = "192.168.0.0/16"
-    protocol    = "all"
+    source   = "192.168.0.0/16"
+    protocol = "all"
   }
 }
