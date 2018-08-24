@@ -1,9 +1,8 @@
 provider "oci" {
-  tenancy_ocid     = "${var.tenancy_ocid}"
-  user_ocid        = "${var.user_ocid}"
-  fingerprint      = "${var.fingerprint}"
-  private_key_path = "${var.private_key_path}"
-  region           = "${var.region}"
+  tenancy_ocid = "${var.tenancy_ocid}"
+  user_ocid    = "${var.user_ocid}"
+  fingerprint  = "${var.fingerprint}"
+  region       = "${var.region}"
 }
 
 data "oci_identity_availability_domains" "ADs" {
@@ -23,7 +22,7 @@ resource "oci_core_subnet" "bare_metal_subnet" {
   display_name        = "Baremetal Subnet"
   compartment_id      = "${var.compartment_ocid}"
   vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
-  route_table_id      = "${oci_core_route_table.default_route_table.id}"
+  route_table_id      = "${oci_core_virtual_network.bare_metal_vcn.default_route_table_id}"
   security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
   dns_label           = "baremetalsubnet"
@@ -35,7 +34,7 @@ resource "oci_core_subnet" "hyperv_subnet" {
   display_name        = "Hyper-V Subnet"
   compartment_id      = "${var.compartment_ocid}"
   vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
-  route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
+  route_table_id      = "${oci_core_virtual_network.bare_metal_vcn.default_route_table_id}"
   security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
   dns_label           = "hypervsubnet"
@@ -104,7 +103,7 @@ resource "oci_core_vnic_attachment" "hvrouter_vnic" {
 
 resource "oci_core_security_list" "bare_metal_security_list" {
   compartment_id = "${var.compartment_ocid}"
-  vcn_id         = "${var.bare_metal_vcn}"
+  vcn_id         = "${oci_core_virtual_network.bare_metal_vcn.id}"
   display_name   = "Bare Metal Security List"
 
   ingress_security_rules {
