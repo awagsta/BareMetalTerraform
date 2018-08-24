@@ -23,7 +23,7 @@ resource "oci_core_subnet" "bare_metal_subnet" {
   display_name        = "Baremetal Subnet"
   compartment_id      = "${var.compartment_ocid}"
   vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
-  route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
+  route_table_id      = "${oci_core_route_table.default_route_table.id}"
   security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
   dns_label           = "baremetalsubnet"
@@ -45,22 +45,6 @@ resource "oci_core_internet_gateway" "bare_metal_gateway" {
   compartment_id = "${var.compartment_ocid}"
   display_name   = "Baremetal Gateway"
   vcn_id         = "${oci_core_virtual_network.bare_metal_vcn.id}"
-}
-
-resource "oci_core_route_table" "bare_metal_route_table" {
-  compartment_id = "${var.compartment_ocid}"
-  vcn_id         = "${oci_core_virtual_network.bare_metal_vcn.id}"
-  display_name   = "Baremetal Route Table"
-
-  route_rules {
-    destination       = "0.0.0.0/0"
-    network_entity_id = "${oci_core_internet_gateway.bare_metal_gateway.id}"
-  }
-
-  #   route_rules {
-  #     destination        = "192.168"
-  #     network_entity_id = "${oci_core_internet_gateway.baremetal_gateway.id}"
-  #   }
 }
 
 resource "oci_core_instance" "bm_instance" {
@@ -115,5 +99,16 @@ resource "oci_core_vnic_attachment" "hvrouter_vnic" {
     assign_public_ip       = true
     display_name           = "hvrouter vnic"
     skip_source_dest_check = true
+  }
+}
+
+resource "oci_core_security_list" "bare_metal_security_list" {
+  compartment_id = "${var.compartment_ocid}"
+  vcn_id         = "${var.bare_metal_vcn}"
+  display_name   = "Bare Metal Security List"
+
+  ingress_security_rules {
+    destination = "192.168.0.0/16"
+    protocol    = "all"
   }
 }
