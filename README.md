@@ -1,4 +1,4 @@
-# Bare metal terraform
+# Bare Metal Terraform
 Terraform Scripts to instantiate a bare metal instance and associated VNICS and subnets.
 
 This script instantiates a bare metal server and the associated networking.
