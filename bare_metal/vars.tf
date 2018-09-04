@@ -30,3 +30,11 @@ variable "instance_image_ocid" {
 
   description = "A map of the images to use by region"
 }
+
+variable "AD" {
+  default = "1"
+}
+
+variable "instance_shape" {
+  default = "BM.DenseIO2.52"
+}
