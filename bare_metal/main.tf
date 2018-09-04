@@ -116,13 +116,22 @@ resource "oci_core_security_list" "bare_metal_security_list" {
   }
 }
 
-resource "oci_core_route_table" "bare_metal_route_table" {
-  compartment_id = "${var.compartment_ocid}"
-  vcn_id         = "${oci_core_virtual_network.bare_metal_vcn.id}"
-  display_name   = "Bare Metal Route Table"
+resource "oci_core_default_route_table" "default-route-table" {
+  manage_default_resource_id = "${oci_core_virtual_network.bare_metal_vcn.default_route_table_id}"
 
   route_rules {
     destination       = "0.0.0.0/0"
     network_entity_id = "${oci_core_internet_gateway.bare_metal_gateway.id}"
   }
+}
+
+resource "oci_core_route_table" "bare_metal_route_table" {
+  compartment_id = "${var.compartment_ocid}"
+  vcn_id         = "${oci_core_virtual_network.bare_metal_vcn.id}"
+  display_name   = "Bare Metal Route Table"
+
+  # route_rules {
+  #   destination       = "0.0.0.0/0"
+  #   network_entity_id = "${oci_core_internet_gateway.bare_metal_gateway.id}"
+  # }
 }
