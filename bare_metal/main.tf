@@ -23,7 +23,7 @@ resource "oci_core_subnet" "bare_metal_subnet" {
   compartment_id      = "${var.compartment_ocid}"
   vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
   route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
-  security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}, ${oci_core_security_list.bare_metal_security_list.id}"]
+  security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
   dns_label           = "bmsubnet"
 }
