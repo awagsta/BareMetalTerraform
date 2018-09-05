@@ -32,7 +32,7 @@ variable "instance_image_ocid" {
 }
 
 variable "AD" {
-  default = "1"
+  default = "2"
 }
 
 variable "instance_shape" {

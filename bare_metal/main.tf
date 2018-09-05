@@ -49,7 +49,7 @@ resource "oci_core_internet_gateway" "bare_metal_gateway" {
 resource "oci_core_instance" "bm_instance" {
   availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.AD - 1],"name")}"
   compartment_id      = "${var.compartment_ocid}"
-  display_name        = "BM Instance"
+  display_name        = "TF BM Instance"
   shape               = "${var.instance_shape}"
   subnet_id           = "${oci_core_subnet.bare_metal_subnet.id}"
 
@@ -91,6 +91,8 @@ resource "oci_core_vnic_attachment" "hvnat_vnic" {
     display_name           = "hvnat vnic"
     skip_source_dest_check = true
   }
+
+  depends_on = ["oci_core_vnic_attachment.bm_vnic_2"]
 }
 
 resource "oci_core_vnic_attachment" "hvrouter_vnic" {
@@ -103,6 +105,8 @@ resource "oci_core_vnic_attachment" "hvrouter_vnic" {
     display_name           = "hvrouter vnic"
     skip_source_dest_check = true
   }
+
+  depends_on = ["oci_core_vnic_attachment.bm_vnic_2"]
 }
 
 resource "oci_core_security_list" "bare_metal_security_list" {
@@ -130,8 +134,8 @@ resource "oci_core_route_table" "bare_metal_route_table" {
   vcn_id         = "${oci_core_virtual_network.bare_metal_vcn.id}"
   display_name   = "Bare Metal Route Table"
 
-  # route_rules {
-  #   destination       = "0.0.0.0/0"
-  #   network_entity_id = "${oci_core_internet_gateway.bare_metal_gateway.id}"
-  # }
+  route_rules {
+    destination       = "0.0.0.0/0"
+    network_entity_id = "${oci_core_internet_gateway.bare_metal_gateway.id}"
+  }
 }
