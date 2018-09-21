@@ -38,3 +38,5 @@ variable "AD" {
 variable "instance_shape" {
   default = "BM.DenseIO2.52"
 }
+
+variable "ssh_private_key_path" {}
