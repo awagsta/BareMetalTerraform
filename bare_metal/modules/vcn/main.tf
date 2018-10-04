@@ -3,18 +3,33 @@ variable "user_ocid" {}
 variable "fingerprint" {}
 variable "region" {}
 variable "compartment_ocid" {}
-variable "AD" {}
 
 variable "vcn_cidr" {
   default = "10.0.0.0/16"
 }
 
-variable "bm_subnet_cidr" {
+variable "bm_subnet_cidr_1" {
   default = "10.0.0.0/24"
 }
 
-variable "hyperv_subnet_cidr" {
+variable "hyperv_subnet_cidr_1" {
   default = "10.0.1.0/24"
+}
+
+variable "bm_subnet_cidr_2" {
+  default = "10.0.2.0/24"
+}
+
+variable "hyperv_subnet_cidr_2" {
+  default = "10.0.3.0/24"
+}
+
+variable "bm_subnet_cidr_3" {
+  default = "10.0.4.0/24"
+}
+
+variable "hyperv_subnet_cidr_3" {
+  default = "10.0.5.0/24"
 }
 
 data "oci_identity_availability_domains" "ADs" {
@@ -28,28 +43,76 @@ resource "oci_core_virtual_network" "bare_metal_vcn" {
   dns_label      = "bmvcn"
 }
 
-resource "oci_core_subnet" "bare_metal_subnet" {
-  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.AD - 1],"name")}"
-  cidr_block          = "${var.bm_subnet_cidr}"
-  display_name        = "Bare Metal Subnet"
+resource "oci_core_subnet" "bare_metal_subnet_1" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[0],"name")}"
+  cidr_block          = "${var.bm_subnet_cidr_1}"
+  display_name        = "Bare Metal Subnet 1"
   compartment_id      = "${var.compartment_ocid}"
   vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
   route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
   security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
-  dns_label           = "bmsubnet"
+  dns_label           = "bmsubnet 1"
 }
 
-resource "oci_core_subnet" "hyperv_subnet" {
-  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[var.AD - 1],"name")}"
-  cidr_block          = "${var.hyperv_subnet_cidr}"
-  display_name        = "Hyper-V Subnet"
+resource "oci_core_subnet" "bare_metal_subnet_2" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[1],"name")}"
+  cidr_block          = "${var.bm_subnet_cidr_2}"
+  display_name        = "Bare Metal Subnet 2"
   compartment_id      = "${var.compartment_ocid}"
   vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
   route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
   security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
-  dns_label           = "hypervsubnet"
+  dns_label           = "bmsubnet 2"
+}
+
+resource "oci_core_subnet" "bare_metal_subnet_3" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[2],"name")}"
+  cidr_block          = "${var.bm_subnet_cidr_2}"
+  display_name        = "Bare Metal Subnet 2"
+  compartment_id      = "${var.compartment_ocid}"
+  vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
+  route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
+  security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
+  dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
+  dns_label           = "bmsubnet 3"
+}
+
+resource "oci_core_subnet" "hyperv_subnet_1" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[0],"name")}"
+  cidr_block          = "${var.hyperv_subnet_cidr_1}"
+  display_name        = "Hyper-V Subnet 1"
+  compartment_id      = "${var.compartment_ocid}"
+  vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
+  route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
+  security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
+  dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
+  dns_label           = "hypervsubnet 1"
+}
+
+resource "oci_core_subnet" "hyperv_subnet_2" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[1],"name")}"
+  cidr_block          = "${var.hyperv_subnet_cidr_2}"
+  display_name        = "Hyper-V Subnet 2"
+  compartment_id      = "${var.compartment_ocid}"
+  vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
+  route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
+  security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
+  dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
+  dns_label           = "hypervsubnet 2"
+}
+
+resource "oci_core_subnet" "hyperv_subnet_3" {
+  availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[2],"name")}"
+  cidr_block          = "${var.hyperv_subnet_cidr_3}"
+  display_name        = "Hyper-V Subnet 13"
+  compartment_id      = "${var.compartment_ocid}"
+  vcn_id              = "${oci_core_virtual_network.bare_metal_vcn.id}"
+  route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
+  security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
+  dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
+  dns_label           = "hypervsubnet 3"
 }
 
 resource "oci_core_internet_gateway" "bare_metal_gateway" {
