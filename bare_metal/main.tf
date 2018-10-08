@@ -16,16 +16,17 @@ module "vcn" {
 }
 
 module "compute" {
-  source               = "./modules/compute"
-  compartment_ocid     = "${var.compartment_ocid}"
-  instance_shape       = "${var.instance_shape}"
-  instance_image_ocid  = "${var.instance_image_ocid}"
-  bm_subnet_1_ocid     = "${module.vcn.bm_subnet_1_ocid}"
-  bm_subnet_2_ocid     = "${module.vcn.bm_subnet_2_ocid}"
-  bm_subnet_3_ocid     = "${module.vcn.bm_subnet_3_ocid}"
-  hyperv_subnet_1_ocid = "${module.vcn.hyperv_subnet_1_ocid}"
-  hyperv_subnet_2_ocid = "${module.vcn.hyperv_subnet_2_ocid}"
-  hyperv_subnet_3_ocid = "${module.vcn.hyperv_subnet_3_ocid}"
-  region               = "${var.region}"
-  tenancy_ocid         = "${var.tenancy_ocid}"
+  source              = "./modules/compute"
+  compartment_ocid    = "${var.compartment_ocid}"
+  instance_shape      = "${var.instance_shape}"
+  instance_image_ocid = "${var.instance_image_ocid}"
+  bm_subnet_ocids     = "${module.vcn.bm_subnet_ocids}"
+  region              = "${var.region}"
+  tenancy_ocid        = "${var.tenancy_ocid}"
+}
+
+module "vnics" {
+  source              = "./modules/vnics"
+  instance_ocids      = "${module.compute.instance_ocids}"
+  hyperv_subnet_ocids = "${module.vcn.hyperv_subnet_ocids}"
 }
