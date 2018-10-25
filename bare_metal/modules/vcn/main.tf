@@ -9,15 +9,14 @@ variable "vcn_cidr" {
 }
 
 variable "bm_subnet_cidrs" {
-  type = "list"
-  default = ["10.0.0.0/24, 10.0.2.0/24, 10.0.4.0/24"]
+  type    = "list"
+  default = ["10.0.0.0/24", "10.0.2.0/24", "10.0.4.0/24"]
 }
 
 variable "hyperv_subnet_cidrs" {
-  type = "list"
-  default = ["10.0.1.0/24, 10.0.3.0/24, 10.0.5.0/24"]
+  type    = "list"
+  default = ["10.0.1.0/24", "10.0.3.0/24", "10.0.5.0/24"]
 }
-
 
 data "oci_identity_availability_domains" "ADs" {
   compartment_id = "${var.tenancy_ocid}"
@@ -31,7 +30,7 @@ resource "oci_core_virtual_network" "bare_metal_vcn" {
 }
 
 resource "oci_core_subnet" "bare_metal_subnet" {
-  count = "3"
+  count               = "3"
   availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index],"name")}"
   cidr_block          = "${element(var.bm_subnet_cidrs, count.index%3)}"
   display_name        = "Bare Metal Subnet ${count.index+1}"
@@ -40,11 +39,11 @@ resource "oci_core_subnet" "bare_metal_subnet" {
   route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
   security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
-  dns_label           = "bmsubnet ${count.index+1}"
+  dns_label           = "bmsubnet${count.index+1}"
 }
 
 resource "oci_core_subnet" "hyperv_subnet" {
-  count  = "3"
+  count               = "3"
   availability_domain = "${lookup(data.oci_identity_availability_domains.ADs.availability_domains[count.index],"name")}"
   cidr_block          = "${element(var.hyperv_subnet_cidrs, count.index%3)}"
   display_name        = "Hyper-V Subnet ${count.index+1}"
@@ -53,7 +52,7 @@ resource "oci_core_subnet" "hyperv_subnet" {
   route_table_id      = "${oci_core_route_table.bare_metal_route_table.id}"
   security_list_ids   = ["${oci_core_virtual_network.bare_metal_vcn.default_security_list_id}", "${oci_core_security_list.bare_metal_security_list.id}"]
   dhcp_options_id     = "${oci_core_virtual_network.bare_metal_vcn.default_dhcp_options_id}"
-  dns_label           = "hypervsubnet ${count.index+1}"
+  dns_label           = "hypervsubnet${count.index+1}"
 }
 
 resource "oci_core_internet_gateway" "bare_metal_gateway" {
